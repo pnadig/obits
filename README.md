@@ -1,11 +1,16 @@
-## A working demo for a SPA with Vue.js and gRPC courtesy of gRPC-web.
+## Obits
 
-## installation
+A searchable index of software engineering post-mortems. You can view it live [here](https://obits.tech) .
 
-```bash
-git clone github.com/b3ntly/vue-grpc
-cd vue-grpc
-yarn install
-./scripts/install_protobuf.sh && ./scripts/get_go_deps
-npm run start
-```
+## Notes
+
+* Currently pre-alpha
+
+* Built with Elasticsearch, Vue.js, Typescript, gRPC, and Golang.
+
+## Special Thanks
+
+Like all software Obits was build with many dependencies. I'd like to give a special shout-out to
+the team at Improbably responsible for gRPC web, github.com/budiadiono for the Vue-typed library, and 
+github.com/olivere for his wonderful Elasticsearch client library for Golang.
+

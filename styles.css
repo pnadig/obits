@@ -1,0 +1,215 @@
+html {
+    padding-top: 0
+}
+
+#content {
+    margin-top: 90px;
+}
+
+a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.error {
+    border: 1px solid #ff0000 !important;
+}
+
+/* form related stylings */
+.form-card:hover {
+    cursor: inherit !important;
+    background-color: white !important;
+}
+
+.three-three {
+    width: 33%;
+}
+
+.fifty {
+    width: 50%
+}
+
+.one-hundred {
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .three-three {
+        width: 100%;
+    }
+
+    .fifty {
+        width: 100%;
+    }
+}
+
+.form-group > input {
+    margin-top: 10px;
+    width: 95% !important;
+    padding: 15px;
+}
+
+.form-group > button {
+    margin-top: 10px;
+    width: 95% !important;
+    border-radius: 0;
+    /*padding: 15px;*/
+}
+
+.form-group > .tags-input {
+    margin-top: 10px;
+    width: 95% !important;
+    padding: 15px;
+    height: 34px;
+}
+
+.form-group > .tags-input:after {
+    content: "Input and press tab to insert tags.";
+    padding-right: 15px;
+}
+
+.form-inline > button {
+    margin-top: 10px;
+}
+/* endform */
+
+/* navbar stylings */
+#navbar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background-color: #09aae4;
+}
+
+#navbar > .navbar-title {
+    color: white;
+    font-size: 20px;
+    padding-left: 15px;
+    margin-top: 24px;
+}
+
+#navbar > .navbar-search {
+    position: absolute;
+    margin-top: 15px;
+    top: 0;
+    right: 15px;
+    width: 300px;
+}
+
+#navbar > .navbar-search-help {
+    position: absolute;
+    top: 50px;
+    right: 15px;
+    margin-top: 2px;
+    color: white;
+}
+
+#navbar > .navbar-search-help:hover {
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 575px) {
+    .form-card {
+        display: none;
+    }
+}
+/* end navbar */
+
+/* info bar stylings */
+#help-message {
+    display: none;
+    user-select: none;
+}
+
+#help-message.helpVisible {
+    display: inherit;
+}
+/* end info bar stylings */
+
+/* item stylings */
+.card {
+    padding: 15px;
+    background-color: white;
+    margin: 15px;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
+
+.card:hover {
+    background-color: rgba(236, 236, 238, 0.28);
+    cursor: pointer;
+}
+
+.hostname {
+    color: #337ab7;
+}
+
+.hostname:hover {
+    text-decoration: underline;
+}
+
+.card > a {
+    color: black;
+    text-decoration: none;
+}
+
+.card > a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.card-link {
+    color: #337ab7 !important;
+}
+
+.card-link:hover {
+    text-decoration: underline !important;
+}
+/* end item stylings */
+
+/* floating search list stylings */
+#search-list {
+    position: absolute;
+    top: 75px;
+    right: 0;
+    width: 320px;
+    min-height: 500px;
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+    display: none;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+#search-list:hover {
+    cursor: inherit;
+}
+
+#search-list.visible {
+    display: inherit;
+    pointer-events: inherit;
+}
+
+#search-list-backdrop {
+    position: fixed;
+    top: 75px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    background-color: white;
+    display: none;
+}
+
+#search-list-backdrop:hover {
+    cursor: pointer;
+}
+
+#search-list-backdrop.visible {
+    display: inherit;
+    pointer-events: inherit;
+}
+/* end search list */

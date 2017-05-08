@@ -1,0 +1,8 @@
+.card
+    a(":href"="item.getLink()", target="_blank")
+        .card-block
+            .card-title {{ item.getAuthor() }} | {{ item.getPublished() }}
+            .card-text.hostname {{ hostname }}
+            .card-text {{ description }}
+
+    a.card-link("@click"="deleteItem(item.getId())", "v-if"="isAdmin") delete

@@ -1,0 +1,22 @@
+div.container
+    #navbar
+        .navbar-title Obits
+        .navbar-search
+            input.form-control(placeholder="search...", "v-model"="searchQuery", "@focus"="toggleProperty('searchVisible')")
+        .navbar-search-help(tabindex="9", "@click"="toggleProperty('helpVisible')")
+            span {{ helpVisible ? 'Hide Search Help':'Search Help'}}
+
+    #content
+        #help-message(":class"="{ helpVisible: helpVisible }")
+            p
+            | Search is currently implemented as the most basic of Elasticsearch term queries.
+            | It will do an exact string-match on all fields of the Item model, i.e. 'Google' will return
+            | all cards where 'Google' (case in-sensitive) is present in the author, link, description, or tags.
+
+        item-form("v-on:createItem"="createItem")
+
+        item-view("v-for"="item in items", ":item"="item", "v-on:deleteItem"="deleteItem", ":isAdmin"="isAdmin")
+        search-list(":items"="searchItems", ":visible"="searchVisible", "v-on:toggleSearch"="toggleProperty('searchVisible')", ":isAdmin"="isAdmin")
+
+    a(@click="logout", "v-if"="user.getName()") Hello Github user \#{{ user.getName() }}
+    a(@click="login", "v-else") Not logged in

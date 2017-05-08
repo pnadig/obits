@@ -1,0 +1,28 @@
+.card.form-card("v-bind:class" = "{ error: hasError}")
+    p.error-message("v-if"="hasError") {{ error }}
+    .card-block
+        form.form-inline
+            .form-group.fifty
+                input.form-control(maxlength="140", tabindex="1", placeholder='Link', "v-model"="link")
+
+            .form-group.fifty
+                input.form-control(maxlength="140", tabindex="2", placeholder='Title', "v-model"="title")
+
+        form.form-inline
+            .form-group.three-three
+                input.form-control(maxlength="140", tabindex="3", placeholder='Author', "v-model"="author")
+
+            .form-group.three-three
+                input.form-control(maxlength="4", max="2018", tabindex="5", type='number', placeholder='Year Published', "v-model"="published")
+
+            .form-group.three-three
+                input.form-control(maxlength="140", tabindex="6", placeholder="Description", "v-model"="description")
+
+        form.form-inline("v-on:keydown.enter.stop.prevent"="noop")
+
+            .form-group.fifty
+                tags-input("v-on:keydown.enter.prevent"="addCategory", ":tags"="tags", "@tags-change"="updateTags", placeholder='tags')
+
+            .form-group.fifty
+                button.btn.btn-default(@click.stop.prevent="submitForm()") Add Item
+

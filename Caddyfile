@@ -1,0 +1,15 @@
+# Host and port to listen and serve on.
+obits.tech
+
+# compress all returned files
+gzip
+
+# prettify urls by truncating file extensions
+ext .html .css .js
+
+log stdout
+errors stdout
+
+root /home
+
+proxy / 127.0.0.1:9090

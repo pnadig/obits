@@ -1,0 +1,5 @@
+div
+    #search-list(":class"="{ visible: visible }")
+        item-view("v-for"="item in items", ":item"="item", ":isAdmin"="isAdmin")
+
+    #search-list-backdrop("@click"="toggleSearch()", ":class"="{ visible: visible }")

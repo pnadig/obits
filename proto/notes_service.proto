@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package items;
+
+message Item {
+    string id = 1;
+    string link = 2;
+    string title = 3;
+    string author = 4;
+    string company = 5;
+    int64 published = 6;
+    string description = 7;
+    repeated string tags = 8;
+    string user = 9;
+    int64 createdAt = 10;
+}
+
+message Items {
+    repeated Item items = 1;
+}
+
+message Query {
+    string id = 1;
+    Item item = 2;
+}
+
+message SearchQuery {
+    string query = 1;
+}
+
+message Token {
+    string token = 1;
+}
+
+message User {
+    string name = 1;
+    string jwt = 2;
+}
+
+service ItemService {
+    rpc AddItem(Query) returns (Item){}
+    rpc GetItem(Query) returns (Item){}
+    rpc GetItems(Query) returns (Items){}
+    rpc UpdateItem(Query) returns (Item){}
+    rpc DeleteItem(Query) returns (Query){}
+    rpc Search(SearchQuery) returns (Items){}
+    rpc VerifyOauth(Token) returns (User){}
+    rpc VerifyJwt(Token) returns (User){}
+}

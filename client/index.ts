@@ -26,7 +26,7 @@ class App extends Vue {
     helpVisible: boolean = false;
 
     user:User = new User();
-    host: string = 'http://localhost:9090';
+    host: string = 'https://obits.tech/api';
     oauthUrl: string = 'https://github.com/login/oauth/authorize?client_id=b6eee37eb6240cd947fb&scope=""';
 
     // checks if current userId matches my public github user id, yes it's validated server-side as well

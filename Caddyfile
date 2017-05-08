@@ -12,4 +12,6 @@ errors stdout
 
 root /home
 
-proxy / 127.0.0.1:9090
+proxy /api 127.0.0.1:9090 {
+    without /api
+}

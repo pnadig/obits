@@ -86,13 +86,7 @@ type GithubVerification struct {
 }
 
 func main() {
-	host := fmt.Sprintf("%v:%v", ELASTICSEARCH_HOST, ELASTICSEARCH_PORT)
-	out, _ := exec.Command("curl", host, "-c 5", "-i 3", "-w 10").Output()
-	fmt.Println(out)
-
-	out, _ = exec.Command("ping", "host", "-c 5", "-i 3", "-w 10").Output()
-	fmt.Println(out)
-
+	host := fmt.Sprintf("http://%v:%v", ELASTICSEARCH_HOST, ELASTICSEARCH_PORT)
 
 	// Instantiate an elastic-gopher client which provides a Mongo-like API for elasticsearch
 	var db *elastic.Session

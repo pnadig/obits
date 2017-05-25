@@ -1,5 +1,5 @@
 # Host and port to listen and serve on.
-obits.tech
+localhost:3000
 
 # compress all returned files
 gzip

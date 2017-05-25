@@ -22,35 +22,41 @@ package main
  */
 
 import (
-	"os"
-	"fmt"
-	"log"
-	"time"
 	"bytes"
-	"errors"
-	"strings"
-	"strconv"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
+	"time"
 
-	proto "github.com/b3ntly/obits/server/_proto"
-	"google.golang.org/grpc"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/metadata"
 	elastic "github.com/b3ntly/elastic-gopher"
-	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"golang.org/x/oauth2"
+	proto "github.com/b3ntly/obits/server/_proto"
 	"github.com/google/go-github/github"
-	"github.com/robbert229/jwt"
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/robbert229/jwt"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
 	// Ports to run the http server which proxies to GRPC
 	PORT = 9090
+
+	//
+	ELASTICSEARCH_PORT = 9200
+
+	//
+	ELASTICSEARCH_HOST = "elasticsearch"
 
 	// Wrapper around an Elasticsearch index, akin to a database in Mongo
 	INDEX *elastic.Index
@@ -73,34 +79,27 @@ var (
 
 // Struct-serialized JSON request used to obtain a Github OAuth access token from a user's temporary client token
 type GithubVerification struct {
-	ClientId string `json:"client_id"`
+	ClientId     string `json:"client_id"`
 	ClientSecret string `json:"client_secret"`
-	Code string `json:"code"`
+	Code         string `json:"code"`
 }
 
-func main(){
+func main() {
 	// Instantiate an elastic-gopher client which provides a Mongo-like API for elasticsearch
-	var es *elastic.Session
+	var db *elastic.Session
 	var err error
 
-	for {
-		// elasticsearch takes quite a while to start-up, so poll until we may connect
-		es, err = elastic.New(&elastic.Options{})
+	host := fmt.Sprintf("http://%v:%v", ELASTICSEARCH_HOST, ELASTICSEARCH_PORT)
+	fmt.Println(host)
 
-		if err == nil {
-			break
-		}
-
-		fmt.Println("Sleeping...")
-		time.Sleep(time.Second)
-	}
+	db, err = elastic.New(&elastic.Options{ Url: host })
 
 	if err != nil {
 		log.Println(err)
 		os.Exit(-1)
 	}
 
-	INDEX = es.I("item")
+	INDEX = db.I("item")
 	COLLECTION = INDEX.T("item")
 
 	grpcServer := grpc.NewServer(
@@ -118,12 +117,12 @@ func main(){
 	wrappedServer := grpcweb.WrapServer(grpcServer)
 
 	// Proxy all http requests to the GRPC layer
-	handler := func(res http.ResponseWriter, req *http.Request){
-		wrappedServer.ServeHttp(res, req)
+	handler := func(res http.ResponseWriter, req *http.Request) {
+		wrappedServer.ServeHTTP(res, req)
 	}
 
 	httpServer := &http.Server{
-		Addr: fmt.Sprintf(":%d", PORT),
+		Addr:    fmt.Sprintf(":%d", PORT),
 		Handler: http.HandlerFunc(handler),
 	}
 
@@ -159,11 +158,11 @@ func Authenticate(ctx context.Context) (context.Context, error) {
 }
 
 // Wrapper struct which will contain controller methods and fulfill the ItemService interface
-type itemService struct {}
+type itemService struct{}
 
 // Insert the given item into elastic search. Note this is entirely schemaless and doesn't have any validation.
 // Return the inserted item on valid insert.
-func (is *itemService) AddItem(ctx context.Context, req *proto.Query) (*proto.Item, error){
+func (is *itemService) AddItem(ctx context.Context, req *proto.Query) (*proto.Item, error) {
 	// GRPC-web will log header issues if we don't send something via SendHeader... maybe a bug or an oversight on my part.
 	// Regardless I'm quieting it for now by calling this statement.
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
@@ -196,7 +195,7 @@ func (is *itemService) AddItem(ctx context.Context, req *proto.Query) (*proto.It
 }
 
 // Query a single item by its id
-func (is *itemService) GetItem(ctx context.Context, req *proto.Query) (*proto.Item, error){
+func (is *itemService) GetItem(ctx context.Context, req *proto.Query) (*proto.Item, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	result, err := COLLECTION.FindById(req.Id)
@@ -219,7 +218,7 @@ func (is *itemService) GetItem(ctx context.Context, req *proto.Query) (*proto.It
 // Query all items. This has no set limit and thus could cause out-of-memory errors or exceed whatever the default
 // response size limit is for GRPC. Our elastic-gopher library does returns serialized results that our not compatible
 // with our response so we must re-serialize them into the desired response object.
-func (is *itemService) GetItems(ctx context.Context, req *proto.Query) (*proto.Items, error){
+func (is *itemService) GetItems(ctx context.Context, req *proto.Query) (*proto.Items, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	results, err := COLLECTION.Find()
@@ -261,7 +260,7 @@ func (is *itemService) GetItems(ctx context.Context, req *proto.Query) (*proto.I
 }
 
 // Update an item by Id.
-func (is *itemService) UpdateItem(ctx context.Context, req *proto.Query) (*proto.Item, error){
+func (is *itemService) UpdateItem(ctx context.Context, req *proto.Query) (*proto.Item, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	userId := ctx.Value("userId").(string)
@@ -319,7 +318,7 @@ func (is *itemService) DeleteItem(ctx context.Context, req *proto.Query) (*proto
 }
 
 // Search all items. Our Elastic-gopher library has a hard limit of 10 or 20 IIRC.
-func (is *itemService) Search(ctx context.Context, req *proto.SearchQuery) (*proto.Items, error){
+func (is *itemService) Search(ctx context.Context, req *proto.SearchQuery) (*proto.Items, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	results, err := INDEX.Search(req.Query)
@@ -363,7 +362,7 @@ func (is *itemService) Search(ctx context.Context, req *proto.SearchQuery) (*pro
 // re-use. HTTP requests in Go also run into errors such as "Too many open files" representing a resource constraint or
 // leak from open file handles. If this program begins throwing such an error it is very likely originating from this
 // function.
-func (is *itemService) VerifyOauth(ctx context.Context, req *proto.Token)(*proto.User, error){
+func (is *itemService) VerifyOauth(ctx context.Context, req *proto.Token) (*proto.User, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	// Serialize our first request to convert the client token into a server token for our Github application.
@@ -430,14 +429,14 @@ func (is *itemService) VerifyOauth(ctx context.Context, req *proto.Token)(*proto
 	// Return the user object. Name is just the id which is also serialized into the token.
 	user := &proto.User{
 		Name: userId,
-		Jwt: jwtToken,
+		Jwt:  jwtToken,
 	}
 
 	return user, nil
 }
 
 // Verify a JWT and return its corresponding User-object if valid.
-func (is *itemService) VerifyJwt(ctx context.Context, req *proto.Token)(*proto.User, error){
+func (is *itemService) VerifyJwt(ctx context.Context, req *proto.Token) (*proto.User, error) {
 	grpc.SendHeader(ctx, metadata.Pairs("Pre-Response-Metadata", "Is-sent-as-headers-unary"))
 
 	// Validate the token then parse it's serialized contents to return a user-id
@@ -447,11 +446,11 @@ func (is *itemService) VerifyJwt(ctx context.Context, req *proto.Token)(*proto.U
 		return nil, err
 	}
 
-	return &proto.User{ Jwt: req.Token, Name: id }, nil
+	return &proto.User{Jwt: req.Token, Name: id}, nil
 }
 
 // Validate a JWT string and return it's serialized userId
-func parseToken(token string) (string, error){
+func parseToken(token string) (string, error) {
 	if token == "" {
 		return "", errors.New("No token")
 	}

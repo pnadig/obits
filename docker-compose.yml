@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  elasticsearch:
+    build: elasticsearch/
+    restart: always
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+    environment:
+      ES_JAVA_OPTS: "-Xmx1024m -Xms1024m"
+
+  webapp:
+    build: .
+    restart: always
+    ports:
+      - "4200:4200"
+
+    links:
+      - elasticsearch
+
+    depends_on:
+      - elasticsearch
+
+  caddy:
+    image: abiosoft/caddy
+    restart: always
+    links:
+      - webapp
+    volumes:
+      - "./Caddyfile:/etc/Caddyfile"
+    ports:
+      - "80:80"
+      - "443:443"

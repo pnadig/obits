@@ -16,3 +16,4 @@ go get golang.org/x/oauth2
 go get github.com/google/go-github/github
 go get github.com/robbert229/jwt
 go get github.com/stretchr/testify/assert
+go get gopkg.in/olivere/elastic.v5

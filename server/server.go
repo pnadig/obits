@@ -86,7 +86,7 @@ type GithubVerification struct {
 }
 
 func main() {
-	host := fmt.Sprintf("http://%v:%v", ELASTICSEARCH_HOST, ELASTICSEARCH_PORT)
+	host := fmt.Sprintf("%v:%v", ELASTICSEARCH_HOST, ELASTICSEARCH_PORT)
 	out, _ := exec.Command("curl", host, "-c 5", "-i 3", "-w 10").Output()
 	fmt.Println(out)
 

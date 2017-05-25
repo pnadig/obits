@@ -33,7 +33,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"os/exec"
 
 	elastic "github.com/b3ntly/elastic-gopher"
 	proto "github.com/b3ntly/obits/server/_proto"
